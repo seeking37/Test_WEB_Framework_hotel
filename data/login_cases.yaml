@@ -1,0 +1,42 @@
+login_success_cases:
+  - id: "valid_user_clark"
+    email: "clark@example.com"
+    password: "password"
+    expected_header: "MyPage"
+    description: "预设用户clark成功登录"
+
+login_failure_cases:
+  - id: "empty_credentials"
+    email: ""
+    password: ""
+    expected_email_msg: "Please fill out this field."
+    expected_password_msg: "Please fill out this field."
+    description: "空输入时登录失败"
+    
+  - id: "invalid_credentials"
+    email: "error@example.com"
+    password: "error"
+    expected_email_msg: "Email or password is invalid."
+    expected_password_msg: "Email or password is invalid."
+    description: "无效用户登录失败"
+    
+  - id: "empty_email_only"
+    email: ""
+    password: "somepassword"
+    expected_email_msg: "Please fill out this field."
+    expected_password_msg: ""
+    description: "仅邮箱为空时登录失败"
+    
+  - id: "empty_password_only"
+    email: "test@example.com"
+    password: ""
+    expected_email_msg: ""
+    expected_password_msg: "Please fill out this field."
+    description: "仅密码为空时登录失败"
+    
+  - id: "invalid_email_format"
+    email: "invalid-email"
+    password: "password"
+    expected_email_msg: "Please enter a non-empty email address."
+    expected_password_msg: ""
+    description: "邮箱格式错误时登录失败" 
