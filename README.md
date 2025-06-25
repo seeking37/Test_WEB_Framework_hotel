@@ -28,8 +28,8 @@
 │   └── icon_page.py         # 头像设置页面
 ├── tests/                   # 测试文件
 │   ├── __init__.py
-│   ├── test_login.py        # 登录功能测试（参数化）
-│   ├── test_signup.py       # 用户注册测试（参数化）
+│   ├── test_login.py        # 登录功能测试
+│   ├── test_signup.py       # 用户注册测试
 │   ├── test_plans.py        # 套餐查看测试
 │   ├── test_redirection.py  # 页面跳转测试
 │   ├── test_reserve.py      # 预订功能测试
