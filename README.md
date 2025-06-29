@@ -1,6 +1,6 @@
 # 酒店预订平台自动化测试项目 - Python Selenium with Pytest & Allure
 
-这是一个基于Python + Selenium + Pytest + Allure的酒店预订系统（开源项目Hotel Example）自动化测试项目，采用Page Object Model设计模式。
+这是一个基于Python + Selenium + Pytest + Allure的酒店预订平台自动化测试项目，采用Page Object Model设计模式。
 
 ## 技术栈
 
