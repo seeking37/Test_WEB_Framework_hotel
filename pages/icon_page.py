@@ -1,8 +1,14 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 from pages.base_page import BasePage
 from pathlib import Path
+
+# ================== 图标页面定位符 ==================
+ICON_INPUT = (By.ID, "icon")
+ZOOM_INPUT = (By.ID, "zoom")
+COLOR_INPUT = (By.ID, "color")
+SUBMIT_BUTTON = (By.CSS_SELECTOR, "#icon-form > button")
+ICON_MESSAGE = (By.CSS_SELECTOR, "#icon ~ .invalid-feedback")
 
 
 class IconPage(BasePage):
@@ -13,23 +19,27 @@ class IconPage(BasePage):
     
     def set_icon(self, file_path: Path) -> None:
         """设置图标文件"""
-        icon_input = self.driver.find_element(By.ID, "icon")
-        icon_input.send_keys(str(file_path.absolute()))
+        self.input_text(ICON_INPUT, str(file_path.absolute()), clear_first=False)
     
     def set_zoom(self, value: int) -> None:
         """设置缩放值"""
-        zoom_input = self.driver.find_element(By.ID, "zoom")
-        self.driver.execute_script("arguments[0].value = arguments[1]", zoom_input, str(value))
+        self.execute_script_on_element(
+            "arguments[0].value = arguments[1]", 
+            ZOOM_INPUT, 
+            str(value)
+        )
     
     def set_color(self, color: Color) -> None:
         """设置颜色"""
-        color_input = self.driver.find_element(By.ID, "color")
-        self.driver.execute_script("arguments[0].value = arguments[1]", color_input, color.hex)
+        self.execute_script_on_element(
+            "arguments[0].value = arguments[1]", 
+            COLOR_INPUT, 
+            color.hex
+        )
     
     def go_to_my_page(self):
         """提交图标设置并返回个人页面"""
-        submit_button = self.driver.find_element(By.CSS_SELECTOR, "#icon-form > button")
-        submit_button.click()
+        self.click_element(SUBMIT_BUTTON)
         
         # 在此处导入以避免循环导入
         from pages.my_page import MyPage
@@ -37,5 +47,4 @@ class IconPage(BasePage):
     
     def get_icon_message(self) -> str:
         """获取图标验证消息"""
-        icon_message = self.driver.find_element(By.CSS_SELECTOR, "#icon ~ .invalid-feedback")
-        return icon_message.text 
+        return self.get_text(ICON_MESSAGE) 

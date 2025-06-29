@@ -1,6 +1,11 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 
+# ================== 房间页面定位符 ==================
+HEADER = (By.TAG_NAME, "h5")
+ROOM_INFO = (By.CSS_SELECTOR, ".room-info")
+ROOM_IMAGES = (By.CSS_SELECTOR, ".room-image")
+
 
 class RoomPage(BasePage):
     """房间页面对象"""
@@ -10,5 +15,4 @@ class RoomPage(BasePage):
     
     def get_header(self) -> str:
         """获取页面标题"""
-        header = self.driver.find_element(By.TAG_NAME, "h5")
-        return header.text
+        return self.get_text(HEADER)

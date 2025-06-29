@@ -1,0 +1,134 @@
+# 预设用户信息验证测试用例
+existing_users_cases:
+  - id: "existing_user_clark"
+    email: "clark@example.com"
+    password: "password"
+    expected_data:
+      email: "clark@example.com"
+      username: "Clark Evans"
+      rank: "Premium"
+      address: "Mountain View, California"
+      tel: "01234567891"
+      gender: "male"
+      birthday: "not answered"
+      notification: "received"
+    description: "验证预设用户clark的信息"
+
+  - id: "existing_user_diana"
+    email: "diana@example.com"
+    password: "pass1234"
+    expected_data:
+      email: "diana@example.com"
+      username: "Diana Johansson"
+      rank: "Normal"
+      address: "Redmond, Washington"
+      tel: "not answered"
+      gender: "female"
+      birthday: "April 1, 2000"
+      notification: "not received"
+    description: "验证预设用户diana的信息"
+
+  - id: "existing_user_ororo"
+    email: "ororo@example.com"
+    password: "pa55w0rd!"
+    expected_data:
+      email: "ororo@example.com"
+      username: "Ororo Saldana"
+      rank: "Premium"
+      address: "Cupertino, California"
+      tel: "01212341234"
+      gender: "other"
+      birthday: "December 17, 1988"
+      notification: "not received"
+    description: "验证预设用户ororo的信息"
+
+  - id: "existing_user_miles"
+    email: "miles@example.com"
+    password: "pass-pass"
+    expected_data:
+      email: "miles@example.com"
+      username: "Miles Boseman"
+      rank: "Normal"
+      address: "not answered"
+      tel: "01298765432"
+      gender: "not answered"
+      birthday: "August 31, 1992"
+      notification: "received"
+    description: "验证预设用户miles的信息"
+
+# 新用户注册测试用例
+new_user_cases:
+  - id: "new_user_signup"
+    signup_data:
+      email: "new-user@example.com"
+      password: "11111111"
+      password_confirmation: "11111111"
+      username: "Jane Doe"
+      rank: "NORMAL"  # 对应Rank.NORMAL
+      address: "Detroit, Michigan"
+      tel: "09876543211"
+      gender: "FEMALE"  # 对应Gender.FEMALE
+      birthday: "2000-01-01"
+      notification: false
+    expected_data:
+      email: "new-user@example.com"
+      username: "Jane Doe"
+      rank: "Normal"
+      address: "Detroit, Michigan"
+      tel: "09876543211"
+      gender: "female"
+      birthday: "January 1, 2000"
+      notification: "not received"
+    description: "验证新用户注册后的信息显示"
+
+# 图标设置测试用例
+icon_test_cases:
+  - id: "icon_not_image"
+    login_data:
+      email: "new-user@example.com"
+      password: "11111111"
+    icon_data:
+      file_path: "data/resources/dummy.txt"
+      zoom: null
+      color: null
+    expected_message: "Please select an image file."
+    expected_success: false
+    description: "选择非图片文件时应该显示错误"
+
+  - id: "icon_over_size"
+    login_data:
+      email: "new-user@example.com"
+      password: "11111111"
+    icon_data:
+      file_path: "data/resources/240x240_12.png"
+      zoom: null
+      color: null
+    expected_message: "Please select a file with a size of 10 KB or less."
+    expected_success: false
+    description: "选择超过10KB文件时应该显示错误"
+
+  - id: "icon_success"
+    login_data:
+      email: "new-user@example.com"
+      password: "11111111"
+    icon_data:
+      file_path: "data/resources/240x240_01.png"
+      zoom: 80
+      color: "black"
+    expected_success: true
+    expected_results:
+      image_exists: true
+      image_width: 70  # 80 - 10 (padding + border)
+      border_color: "black"
+    description: "成功设置图标"
+
+# 用户删除测试用例
+delete_user_cases:
+  - id: "delete_new_user"
+    login_data:
+      email: "new-user@example.com"
+      password: "11111111"
+    expected_confirm_message: "If you cancel your membership, all information will be deleted.\nDo you wish to proceed?"
+    expected_complete_message: "The process has been completed. Thank you for your service."
+    expected_redirect_url: "index.html"
+    description: "删除新用户账户" 

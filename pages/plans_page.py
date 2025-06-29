@@ -1,7 +1,12 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from typing import List
+
+# ================== 方案页面定位符 ==================
+LOADING_INDICATOR = (By.CSS_SELECTOR, "#plan-list > div[role=\"status\"]")
+PLAN_CARDS = (By.CLASS_NAME, "card")
+PLAN_TITLES = (By.CLASS_NAME, "card-title")
+PLAN_LINK = (By.TAG_NAME, "a")
 
 
 class PlansPage(BasePage):
@@ -11,24 +16,31 @@ class PlansPage(BasePage):
         self.verify_page_title("Plans")
     
     def get_plan_titles(self) -> List[str]:
-        """Get list of plan titles"""
-        # Wait for loading to complete
-        self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, "#plan-list > div[role=\"status\"]")))
-        plans = self.driver.find_elements(By.CLASS_NAME, "card-title")
-        return [plan.text for plan in plans]
+        """获取计划标题列表"""
+        # 等待加载完成
+        self.wait_for_element_disappear(LOADING_INDICATOR)
+        
+        # 获取所有计划标题
+        plan_elements = self.find_elements(PLAN_TITLES)
+        return [plan.text for plan in plan_elements]
     
     def open_plan_by_title(self, title: str) -> None:
-        """Open plan by title"""
-        # Wait for loading to complete
-        self.wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, "#plan-list > div[role=\"status\"]")))
-        plans = self.driver.find_elements(By.CLASS_NAME, "card")
+        """根据标题打开计划"""
+        # 等待加载完成
+        self.wait_for_element_disappear(LOADING_INDICATOR)
         
-        for plan in plans:
-            plan_title = plan.find_element(By.CLASS_NAME, "card-title").text
-            if plan_title == title:
-                link = plan.find_element(By.TAG_NAME, "a")
-                link.click()
-                break
+        # 获取所有计划卡片
+        plan_cards = self.find_elements(PLAN_CARDS)
         
-        # Wait for new window to open
-        self.wait.until(EC.number_of_windows_to_be(2)) 
+        for plan_card in plan_cards:
+            # 在每个卡片中查找标题
+            title_elements = plan_card.find_elements(*PLAN_TITLES)
+            if title_elements and title_elements[0].text == title:
+                # 找到匹配的计划，点击链接
+                link_elements = plan_card.find_elements(*PLAN_LINK)
+                if link_elements:
+                    link_elements[0].click()
+                    break
+        
+        # 等待新窗口打开
+        self.wait.until(lambda driver: len(driver.window_handles) == 2) 

@@ -1,11 +1,32 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
 from pages.base_page import BasePage
 from datetime import date
 from enum import Enum
 from typing import Optional
+
+# ================== 注册页面定位符 ==================
+EMAIL_INPUT = (By.ID, "email")
+PASSWORD_INPUT = (By.ID, "password")
+PASSWORD_CONFIRMATION_INPUT = (By.ID, "password-confirmation")
+USERNAME_INPUT = (By.ID, "username")
+RANK_PREMIUM_RADIO = (By.ID, "rank-premium")
+RANK_NORMAL_RADIO = (By.ID, "rank-normal")
+ADDRESS_INPUT = (By.ID, "address")
+TEL_INPUT = (By.ID, "tel")
+GENDER_SELECT = (By.ID, "gender")
+BIRTHDAY_INPUT = (By.ID, "birthday")
+NOTIFICATION_CHECKBOX = (By.ID, "notification")
+SIGNUP_BUTTON = (By.CSS_SELECTOR, "#signup-form > button")
+
+# 错误消息定位符
+EMAIL_MESSAGE = (By.CSS_SELECTOR, "#email ~ .invalid-feedback")
+PASSWORD_MESSAGE = (By.CSS_SELECTOR, "#password ~ .invalid-feedback")
+PASSWORD_CONFIRMATION_MESSAGE = (By.CSS_SELECTOR, "#password-confirmation ~ .invalid-feedback")
+USERNAME_MESSAGE = (By.CSS_SELECTOR, "#username ~ .invalid-feedback")
+ADDRESS_MESSAGE = (By.CSS_SELECTOR, "#address ~ .invalid-feedback")
+TEL_MESSAGE = (By.CSS_SELECTOR, "#tel ~ .invalid-feedback")
+GENDER_MESSAGE = (By.CSS_SELECTOR, "#gender ~ .invalid-feedback")
+BIRTHDAY_MESSAGE = (By.CSS_SELECTOR, "#birthday ~ .invalid-feedback")
 
 
 class Rank(Enum):
@@ -27,119 +48,95 @@ class SignupPage(BasePage):
         self.verify_page_title("Sign up")
     
     def set_email(self, email: str) -> None:
-        """Set email field"""
-        email_input = self.driver.find_element(By.ID, "email")
-        email_input.clear()
-        email_input.send_keys(email)
+        """设置邮箱"""
+        self.input_text(EMAIL_INPUT, email)
     
     def set_password(self, password: str) -> None:
-        """Set password field"""
-        password_input = self.driver.find_element(By.ID, "password")
-        password_input.clear()
-        password_input.send_keys(password)
+        """设置密码"""
+        self.input_text(PASSWORD_INPUT, password)
     
     def set_password_confirmation(self, password: str) -> None:
-        """Set password confirmation field"""
-        password_confirmation_input = self.driver.find_element(By.ID, "password-confirmation")
-        password_confirmation_input.clear()
-        password_confirmation_input.send_keys(password)
+        """设置确认密码"""
+        self.input_text(PASSWORD_CONFIRMATION_INPUT, password)
     
     def set_username(self, username: str) -> None:
-        """Set username field"""
-        username_input = self.driver.find_element(By.ID, "username")
-        username_input.clear()
-        username_input.send_keys(username)
+        """设置用户名"""
+        self.input_text(USERNAME_INPUT, username)
     
     def set_rank(self, rank: Rank) -> None:
-        """Set rank radio button"""
+        """设置会员等级"""
         if rank == Rank.PREMIUM:
-            premium_radio = self.driver.find_element(By.ID, "rank-premium")
-            premium_radio.click()
+            self.click_element(RANK_PREMIUM_RADIO)
         elif rank == Rank.NORMAL:
-            normal_radio = self.driver.find_element(By.ID, "rank-normal")
-            normal_radio.click()
+            self.click_element(RANK_NORMAL_RADIO)
         else:
             raise ValueError(f"Invalid rank: {rank}")
     
     def set_address(self, address: str) -> None:
-        """Set address field"""
-        address_input = self.driver.find_element(By.ID, "address")
-        address_input.clear()
-        address_input.send_keys(address)
+        """设置地址"""
+        self.input_text(ADDRESS_INPUT, address)
     
     def set_tel(self, tel: str) -> None:
-        """Set telephone field"""
-        tel_input = self.driver.find_element(By.ID, "tel")
-        tel_input.clear()
-        tel_input.send_keys(tel)
+        """设置电话"""
+        self.input_text(TEL_INPUT, tel)
     
     def set_gender(self, gender: Gender) -> None:
-        """Set gender dropdown"""
-        gender_select = Select(self.driver.find_element(By.ID, "gender"))
-        gender_select.select_by_value(gender.value)
+        """设置性别"""
+        self.select_dropdown_by_value(GENDER_SELECT, gender.value)
     
     def set_birthday(self, birthday: Optional[date]) -> None:
-        """Set birthday field using JavaScript"""
+        """设置生日"""
         birthday_str = birthday.strftime("%Y-%m-%d") if birthday else ""
-        birthday_input = self.driver.find_element(By.ID, "birthday")
-        self.driver.execute_script("arguments[0].value = arguments[1]", birthday_input, birthday_str)
+        self.execute_script_on_element(
+            "arguments[0].value = arguments[1]", 
+            BIRTHDAY_INPUT, 
+            birthday_str
+        )
     
     def set_notification(self, checked: bool) -> None:
-        """Set notification checkbox"""
-        notification_check = self.driver.find_element(By.ID, "notification")
-        if notification_check.is_selected() != checked:
-            notification_check.click()
+        """设置通知选项"""
+        self.set_checkbox(NOTIFICATION_CHECKBOX, checked)
     
     def go_to_my_page(self):
-        """Submit signup form and go to my page"""
-        signup_button = self.driver.find_element(By.CSS_SELECTOR, "#signup-form > button")
-        signup_button.click()
+        """提交注册表单并跳转到个人页面"""
+        self.click_element(SIGNUP_BUTTON)
         
-        # Import here to avoid circular import
+        # 在此处导入以避免循环导入
         from pages.my_page import MyPage
         return MyPage(self.driver)
     
     def go_to_my_page_expecting_failure(self) -> None:
-        """Submit signup form expecting failure"""
-        signup_button = self.driver.find_element(By.CSS_SELECTOR, "#signup-form > button")
-        signup_button.click()
+        """提交注册表单期望失败"""
+        self.click_element(SIGNUP_BUTTON)
     
     def get_email_message(self) -> str:
-        """Get email validation message"""
-        email_message = self.driver.find_element(By.CSS_SELECTOR, "#email ~ .invalid-feedback")
-        return email_message.text
+        """获取邮箱验证消息"""
+        return self.get_text(EMAIL_MESSAGE)
     
     def get_password_message(self) -> str:
-        """Get password validation message"""
-        password_message = self.driver.find_element(By.CSS_SELECTOR, "#password ~ .invalid-feedback")
-        return password_message.text
+        """获取密码验证消息"""
+        return self.get_text(PASSWORD_MESSAGE)
     
     def get_password_confirmation_message(self) -> str:
-        """Get password confirmation validation message"""
-        password_confirmation_message = self.driver.find_element(By.CSS_SELECTOR, "#password-confirmation ~ .invalid-feedback")
-        return password_confirmation_message.text
+        """获取确认密码验证消息"""
+        return self.get_text(PASSWORD_CONFIRMATION_MESSAGE)
     
     def get_username_message(self) -> str:
-        """Get username validation message"""
-        username_message = self.driver.find_element(By.CSS_SELECTOR, "#username ~ .invalid-feedback")
-        return username_message.text
+        """获取用户名验证消息"""
+        return self.get_text(USERNAME_MESSAGE)
     
     def get_address_message(self) -> str:
-        """Get address validation message"""
-        address_message = self.driver.find_element(By.CSS_SELECTOR, "#address ~ .invalid-feedback")
-        return address_message.text
+        """获取地址验证消息"""
+        return self.get_text(ADDRESS_MESSAGE)
     
     def get_tel_message(self) -> str:
-        """Get telephone validation message"""
-        tel_message = self.driver.find_element(By.CSS_SELECTOR, "#tel ~ .invalid-feedback")
-        return tel_message.text
+        """获取电话验证消息"""
+        return self.get_text(TEL_MESSAGE)
     
     def get_gender_message(self) -> str:
-        """Get gender validation message"""
-        gender_message = self.driver.find_element(By.CSS_SELECTOR, "#gender ~ .invalid-feedback")
-        return gender_message.text
+        """获取性别验证消息"""
+        return self.get_text(GENDER_MESSAGE)
     
     def get_birthday_message(self) -> str:
-        """Get birthday validation message"""
-        birthday_message = self.driver.find_element(By.CSS_SELECTOR, "#birthday ~ .invalid-feedback")
-        return birthday_message.text 
+        """获取生日验证消息"""
+        return self.get_text(BIRTHDAY_MESSAGE) 

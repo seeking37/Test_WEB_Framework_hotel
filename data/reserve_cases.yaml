@@ -1,0 +1,155 @@
+# 预订功能测试用例数据
+page_init_cases:
+  - id: "init_guest_user"
+    description: "未登录用户预订页面初始值"
+    is_logged_in: false
+    login_email: ""
+    login_password: ""
+    plan_title: "Plan with special offers"
+    expected_plan_name: "Plan with special offers"
+    expected_reserve_term: "1"
+    expected_head_count: "1"
+    expected_username: ""
+    expected_email: ""
+    expected_tel: ""
+    expected_room_header: "Standard Twin"
+    has_login_data: false
+
+  - id: "init_logged_user"
+    description: "已登录用户预订页面初始值"
+    is_logged_in: true
+    login_email: "clark@example.com"
+    login_password: "password"
+    plan_title: "Premium plan"
+    expected_plan_name: "Premium plan"
+    expected_reserve_term: "1"
+    expected_head_count: "2"
+    expected_username: "Clark Evans"
+    expected_email: "clark@example.com"
+    expected_tel: "01234567891"
+    expected_room_header: "Premium Twin"
+    has_login_data: true
+
+input_validation_cases:
+  - id: "blank_values"
+    description: "空白值应显示错误"
+    plan_title: "Plan with special offers"
+    reserve_date: ""
+    reserve_term: ""
+    head_count: ""
+    username: ""
+    expected_messages:
+      reserve_date: "Please fill out this field."
+      reserve_term: "Please fill out this field."
+      head_count: "Please fill out this field."
+
+  - id: "small_values"
+    description: "小于最小值应显示错误"
+    plan_title: "Plan with special offers"
+    reserve_date: "today"  # 特殊标记，测试中会替换为今天日期
+    reserve_term: "0"
+    head_count: "0"
+    username: "the tester"
+    expected_messages:
+      reserve_date: "Please enter a date after tomorrow."
+      reserve_term: "Value must be greater than or equal to 1."
+      head_count: "Value must be greater than or equal to 1."
+
+  - id: "large_values"
+    description: "大于最大值应显示错误"
+    plan_title: "Plan with special offers"
+    reserve_date: "after_91_days"  # 特殊标记，测试中会替换为91天后日期（超过3个月）
+    reserve_term: "10"
+    head_count: "10"
+    username: "the tester"
+    expected_messages:
+      reserve_date: "Please enter a date within 3 months."
+      reserve_term: "Value must be less than or equal to 9."
+      head_count: "Value must be less than or equal to 9."
+
+  - id: "invalid_string_values"
+    description: "字符串类型无效值应显示错误"
+    plan_title: "Plan with special offers"
+    reserve_date: "12/3//345"
+    reserve_term: "a"
+    head_count: "a"
+    username: "the tester"
+    expected_messages:
+      reserve_date: "Please enter a valid value."
+      reserve_term: null  # 可能不显示错误消息
+      head_count: null   # 可能不显示错误消息
+
+submit_validation_cases:
+  - id: "empty_email_contact"
+    description: "提交时邮箱验证应显示错误"
+    plan_title: "Plan with special offers"
+    username: ""
+    contact_type: "email"
+    email: ""
+    tel: ""
+    expected_messages:
+      username: "Please fill out this field."
+      email: "Please fill out this field."
+
+  - id: "empty_tel_contact"
+    description: "提交时电话验证应显示错误"
+    plan_title: "Plan with special offers"
+    username: ""
+    contact_type: "tel"
+    email: ""
+    tel: ""
+    expected_messages:
+      username: "Please fill out this field."
+      tel: "Please fill out this field."
+
+reserve_success_cases:
+  - id: "guest_user_success"
+    description: "未登录用户预订成功（初始值）"
+    is_logged_in: false
+    login_email: ""
+    login_password: ""
+    plan_title: "Plan with special offers"
+    username: "the tester"
+    contact_type: "no"
+    email: ""
+    tel: ""
+    comment: ""
+    reserve_date: "tomorrow"  # 特殊标记
+    reserve_term: "1"
+    head_count: "1"
+    breakfast_plan: false
+    early_check_in_plan: false
+    sightseeing_plan: false
+    expected_plan_name: "Plan with special offers"
+    expected_head_count: "1 person(s)"
+    expected_plans: "none"
+    expected_username: "the tester"
+    expected_contact: "not required"
+    expected_comment: "none"
+    expected_modal_message: "We look forward to visiting you."
+
+  - id: "logged_user_success"
+    description: "已登录用户预订成功"
+    is_logged_in: true
+    login_email: "clark@example.com"
+    login_password: "password"
+    plan_title: "Premium plan"
+    username: ""  # 会使用登录用户默认值
+    contact_type: "email"
+    email: ""     # 会使用登录用户默认值
+    tel: ""
+    comment: "aaa\n\nbbbbbbb\ncc"
+    reserve_date: "after_90_days"  # 特殊标记
+    reserve_term: "2"
+    head_count: "4"
+    breakfast_plan: true
+    early_check_in_plan: true
+    sightseeing_plan: false
+    expected_plan_name: "Premium plan"
+    expected_head_count: "4 person(s)"
+    expected_plans_contain: ["Breakfast", "Early check-in"]
+    expected_plans_not_contain: ["Sightseeing"]
+    expected_username: "Clark Evans"
+    expected_contact: "Email: clark@example.com"
+    expected_comment: "aaa\n\nbbbbbbb\ncc"
+    expected_modal_message: "We look forward to visiting you." 

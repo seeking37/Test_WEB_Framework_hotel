@@ -14,25 +14,26 @@ class TestDataLoader:
             return yaml.safe_load(file)
     
     @staticmethod
-    def get_login_success_cases() -> List[Dict[str, Any]]:
-        """获取登录成功测试用例"""
-        data = TestDataLoader.load_yaml_data('../data/login_cases.yaml')
-        return data.get('login_success_cases', [])
-    
-    @staticmethod
-    def get_login_failure_cases() -> List[Dict[str, Any]]:
-        """获取登录失败测试用例"""
-        data = TestDataLoader.load_yaml_data('../data/login_cases.yaml')
-        return data.get('login_failure_cases', [])
-    
-    @staticmethod
-    def get_signup_success_cases() -> List[Dict[str, Any]]:
-        """获取注册成功测试用例"""
-        data = TestDataLoader.load_yaml_data('../data/signup_cases.yaml')
-        return data.get('signup_success_cases', [])
-    
-    @staticmethod
-    def get_signup_failure_cases() -> List[Dict[str, Any]]:
-        """获取注册失败测试用例"""
-        data = TestDataLoader.load_yaml_data('../data/signup_cases.yaml')
-        return data.get('signup_failure_cases', []) 
+    def get_test_cases(yaml_file: str, case_key: str) -> List[Dict[str, Any]]:
+        """
+        通用的测试用例获取方法
+        
+        Args:
+            yaml_file: YAML文件路径（相对于common目录），如：'../data/login_cases.yaml'
+            case_key: 测试用例在YAML中的键名，如：'login_success_cases'
+            
+        Returns:
+            测试用例列表
+            
+        Examples:
+            # 获取登录成功用例
+            TestDataLoader.get_test_cases('../data/login_cases.yaml', 'login_success_cases')
+            
+            # 获取注册失败用例  
+            TestDataLoader.get_test_cases('../data/signup_cases.yaml', 'signup_failure_cases')
+            
+            # 获取个人页面预设用户用例
+            TestDataLoader.get_test_cases('../data/mypage_cases.yaml', 'existing_users_cases')
+        """
+        data = TestDataLoader.load_yaml_data(yaml_file)
+        return data.get(case_key, []) 

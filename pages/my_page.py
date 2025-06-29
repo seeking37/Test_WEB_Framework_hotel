@@ -2,7 +2,27 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 from pages.base_page import BasePage
-from typing import List
+
+# ================== 个人页面定位符 ==================
+HEADER = (By.TAG_NAME, "h2")
+EMAIL_TEXT = (By.ID, "email")
+USERNAME_TEXT = (By.ID, "username")
+RANK_TEXT = (By.ID, "rank")
+ADDRESS_TEXT = (By.ID, "address")
+TEL_TEXT = (By.ID, "tel")
+GENDER_TEXT = (By.ID, "gender")
+BIRTHDAY_TEXT = (By.ID, "birthday")
+NOTIFICATION_TEXT = (By.ID, "notification")
+
+# 导航链接
+RESERVE_LINK = (By.LINK_TEXT, "Reserve")
+ICON_LINK = (By.ID, "icon-link")
+
+# 图标相关
+ICON_IMAGE = (By.CSS_SELECTOR, "#icon-holder > img")
+
+# 删除按钮
+DELETE_BUTTON = (By.CSS_SELECTOR, "#delete-form > button")
 
 
 class MyPage(BasePage):
@@ -13,8 +33,7 @@ class MyPage(BasePage):
     
     def go_to_plans_page(self):
         """导航到方案页面"""
-        plan_link = self.driver.find_element(By.LINK_TEXT, "Reserve")
-        plan_link.click()
+        self.click_element(RESERVE_LINK)
         
         # 在此处导入以避免循环导入
         from pages.plans_page import PlansPage
@@ -22,78 +41,65 @@ class MyPage(BasePage):
     
     def go_to_icon_page(self):
         """导航到图标页面"""
-        icon_link = self.driver.find_element(By.ID, "icon-link")
-        icon_link.click()
+        self.click_element(ICON_LINK)
         
         # 在此处导入以避免循环导入
         from pages.icon_page import IconPage
         return IconPage(self.driver)
     
     def get_header_text(self) -> str:
-        """获取标题文本"""
-        header = self.driver.find_element(By.TAG_NAME, "h2")
-        return header.text
+        """获取页面标题文本"""
+        return self.get_text(HEADER)
     
     def get_email(self) -> str:
-        """获取邮箱文本"""
-        email = self.driver.find_element(By.ID, "email")
-        return email.text
+        """获取邮箱信息"""
+        return self.get_text(EMAIL_TEXT)
     
     def get_username(self) -> str:
-        """获取用户名文本"""
-        username = self.driver.find_element(By.ID, "username")
-        return username.text
+        """获取用户名信息"""
+        return self.get_text(USERNAME_TEXT)
     
     def get_rank(self) -> str:
-        """获取会员等级文本"""
-        rank = self.driver.find_element(By.ID, "rank")
-        return rank.text
+        """获取会员等级信息"""
+        return self.get_text(RANK_TEXT)
     
     def get_address(self) -> str:
-        """获取地址文本"""
-        address = self.driver.find_element(By.ID, "address")
-        return address.text
+        """获取地址信息"""
+        return self.get_text(ADDRESS_TEXT)
     
     def get_tel(self) -> str:
-        """获取电话文本"""
-        tel = self.driver.find_element(By.ID, "tel")
-        return tel.text
+        """获取电话信息"""
+        return self.get_text(TEL_TEXT)
     
     def get_gender(self) -> str:
-        """获取性别文本"""
-        gender = self.driver.find_element(By.ID, "gender")
-        return gender.text
+        """获取性别信息"""
+        return self.get_text(GENDER_TEXT)
     
     def get_birthday(self) -> str:
-        """获取生日文本"""
-        birthday = self.driver.find_element(By.ID, "birthday")
-        return birthday.text
+        """获取生日信息"""
+        return self.get_text(BIRTHDAY_TEXT)
     
     def get_notification(self) -> str:
-        """获取通知文本"""
-        notification = self.driver.find_element(By.ID, "notification")
-        return notification.text
+        """获取通知设置信息"""
+        return self.get_text(NOTIFICATION_TEXT)
     
     def exists_icon_image(self) -> bool:
         """检查图标图片是否存在"""
-        images = self.driver.find_elements(By.CSS_SELECTOR, "#icon-holder > img")
-        return len(images) > 0
+        elements = self.find_elements(ICON_IMAGE)
+        return len(elements) > 0
     
     def get_icon_image_width(self) -> int:
         """获取图标图片宽度"""
-        image = self.driver.find_element(By.CSS_SELECTOR, "#icon-holder > img")
-        width = image.get_property("width")
+        width = self.get_property(ICON_IMAGE, "width")
         return int(width) if width else -1
     
     def get_icon_image_border(self) -> Color:
         """获取图标图片边框颜色"""
-        image = self.driver.find_element(By.CSS_SELECTOR, "#icon-holder > img")
-        background_color = image.value_of_css_property("backgroundColor")
+        background_color = self.get_css_value(ICON_IMAGE, "backgroundColor")
         if not background_color:
-            background_color = image.value_of_css_property("background-color")
+            background_color = self.get_css_value(ICON_IMAGE, "background-color")
         return Color.from_string(background_color)
     
     def delete_user(self) -> None:
         """删除用户账户"""
-        delete_button = self.driver.find_element(By.CSS_SELECTOR, "#delete-form > button")
-        delete_button.click() 
+        self.click_element(DELETE_BUTTON) 

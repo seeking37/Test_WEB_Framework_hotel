@@ -10,7 +10,7 @@ from common.read_data import TestDataLoader
 class TestLogin:
     
     @allure.story("登录成功")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_login_success_cases(), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/login_cases.yaml', 'login_success_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(1)
     def test_login_success(self, driver, test_case):
         """测试用户成功登录"""
@@ -24,7 +24,7 @@ class TestLogin:
             assert my_page.get_header_text() == test_case['expected_header']
     
     @allure.story("登录失败")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_login_failure_cases(), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/login_cases.yaml', 'login_failure_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(2)
     def test_login_failure(self, driver, test_case):
         """测试用户登录失败"""

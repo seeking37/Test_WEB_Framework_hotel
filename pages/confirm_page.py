@@ -2,10 +2,26 @@ import time
 import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 from common.utils import Utils
 import allure
+
+# ================== 确认页面定位符 ==================
+# 信息显示
+TOTAL_BILL_TEXT = (By.ID, "total-bill")
+PLAN_NAME_TEXT = (By.ID, "plan-name")
+TERM_TEXT = (By.ID, "term")
+HEAD_COUNT_TEXT = (By.ID, "head-count")
+PLANS_TEXT = (By.ID, "plans")
+USERNAME_TEXT = (By.ID, "username")
+CONTACT_TEXT = (By.ID, "contact")
+COMMENT_TEXT = (By.ID, "comment")
+
+# 按钮和模态框
+CONFIRM_BUTTON = (By.CSS_SELECTOR, "button[data-target='#success-modal']")
+SUCCESS_MODAL = (By.ID, "success-modal")
+MODAL_MESSAGE = (By.CSS_SELECTOR, "#success-modal > div > div > .modal-body")
+CLOSE_BUTTON = (By.CSS_SELECTOR, "#success-modal > div > div > div > button.btn-success")
 
 
 class ConfirmPage(BasePage):
@@ -13,74 +29,61 @@ class ConfirmPage(BasePage):
     
     def __init__(self, driver):
         super().__init__(driver)
-        self.wait = WebDriverWait(driver, 10)
-        self.wait.until(EC.title_contains("Confirm Reservation"))
-        if not self.driver.title or not self.driver.title.startswith("Confirm Reservation"):
-            raise Exception(f"错误页面: {self.driver.title}")
+        self.wait_for_title_contains("Confirm Reservation")
+        self.verify_page_title("Confirm Reservation")
     
     def get_total_bill(self) -> str:
         """获取总金额"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "total-bill").text))
-        total_bill = self.driver.find_element(By.ID, "total-bill")
-        return total_bill.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(TOTAL_BILL_TEXT)))
+        return self.get_text(TOTAL_BILL_TEXT)
     
     def get_plan_name(self) -> str:
         """获取计划名称"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "plan-name").text))
-        plan_name = self.driver.find_element(By.ID, "plan-name")
-        return plan_name.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(PLAN_NAME_TEXT)))
+        return self.get_text(PLAN_NAME_TEXT)
     
     def get_term(self) -> str:
         """获取预订时间段"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "term").text))
-        term = self.driver.find_element(By.ID, "term")
-        return term.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(TERM_TEXT)))
+        return self.get_text(TERM_TEXT)
     
     def get_head_count(self) -> str:
         """获取人数"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "head-count").text))
-        head_count = self.driver.find_element(By.ID, "head-count")
-        return head_count.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(HEAD_COUNT_TEXT)))
+        return self.get_text(HEAD_COUNT_TEXT)
     
     def get_plans(self) -> str:
         """获取选择的计划"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "plans").text))
-        plans = self.driver.find_element(By.ID, "plans")
-        return plans.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(PLANS_TEXT)))
+        return self.get_text(PLANS_TEXT)
     
     def get_username(self) -> str:
         """获取用户名"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "username").text))
-        username = self.driver.find_element(By.ID, "username")
-        return username.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(USERNAME_TEXT)))
+        return self.get_text(USERNAME_TEXT)
     
     def get_contact(self) -> str:
         """获取联系方式"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "contact").text))
-        contact = self.driver.find_element(By.ID, "contact")
-        return contact.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(CONTACT_TEXT)))
+        return self.get_text(CONTACT_TEXT)
     
     def get_comment(self) -> str:
         """获取备注"""
-        self.wait.until(lambda driver: re.search(r'.+', driver.find_element(By.ID, "comment").text))
-        comment = self.driver.find_element(By.ID, "comment")
-        return comment.text
+        self.wait.until(lambda driver: re.search(r'.+', self.get_text(COMMENT_TEXT)))
+        return self.get_text(COMMENT_TEXT)
     
     @allure.step("确认预订")
     def do_confirm(self):
         """确认预订"""
-        confirm_button = self.driver.find_element(By.CSS_SELECTOR, "button[data-target='#success-modal']")
-        confirm_button.click()
+        self.click_element(CONFIRM_BUTTON)
         Utils.sleep(2)
-        self.wait.until(EC.visibility_of_element_located((By.ID, "success-modal")))
+        self.wait_for_element_visible(SUCCESS_MODAL)
     
     def get_modal_message(self) -> str:
         """获取模态框消息"""
-        modal_message = self.driver.find_element(By.CSS_SELECTOR, "#success-modal > div > div > .modal-body")
-        return modal_message.text
+        return self.get_text(MODAL_MESSAGE)
     
     @allure.step("关闭模态框")
     def close(self):
         """关闭模态框"""
-        close_button = self.driver.find_element(By.CSS_SELECTOR, "#success-modal > div > div > div > button.btn-success")
-        close_button.click()
+        self.click_element(CLOSE_BUTTON)

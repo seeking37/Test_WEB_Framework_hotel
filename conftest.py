@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import os
 
-
+# setup和teardown
 @pytest.fixture(scope="class")
 def driver():
     """测试类的WebDriver fixture"""
