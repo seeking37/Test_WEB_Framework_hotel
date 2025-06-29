@@ -5,7 +5,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium import webdriver
 from typing import Optional, List, Tuple, Union
-import time
 
 
 class BasePage:
@@ -69,6 +68,17 @@ class BasePage:
             return element
         except TimeoutException:
             raise ElementNotFoundError(f"元素不可见: {locator}")
+    
+    def wait_for_element_disappear(self, locator: Tuple[By, str], timeout: Optional[int] = None) -> bool:
+        """等待元素消失"""
+        wait_time = timeout or self.timeout
+        try:
+            WebDriverWait(self.driver, wait_time).until_not(
+                EC.presence_of_element_located(locator)
+            )
+            return True
+        except TimeoutException:
+            return False
     
     def is_element_present(self, locator: Tuple[By, str]) -> bool:
         """检查元素是否存在"""
@@ -146,66 +156,13 @@ class BasePage:
         """在元素上执行JavaScript"""
         element = self.find_element(locator, timeout)
         return self.driver.execute_script(script, element, *args)
-    
-    # ================== 等待操作封装 ==================
-    
-    def wait_for_text_in_element(self, locator: Tuple[By, str], text: str, timeout: Optional[int] = None) -> bool:
-        """等待元素包含指定文本"""
-        wait_time = timeout or self.timeout
-        try:
-            WebDriverWait(self.driver, wait_time).until(
-                EC.text_to_be_present_in_element(locator, text)
-            )
-            return True
-        except TimeoutException:
-            return False
-    
-    def wait_for_element_disappear(self, locator: Tuple[By, str], timeout: Optional[int] = None) -> bool:
-        """等待元素消失"""
-        wait_time = timeout or self.timeout
-        try:
-            WebDriverWait(self.driver, wait_time).until_not(
-                EC.presence_of_element_located(locator)
-            )
-            return True
-        except TimeoutException:
-            return False
-    
-    def wait_for_url_contains(self, url_fragment: str, timeout: Optional[int] = None) -> bool:
-        """等待URL包含指定片段"""
-        wait_time = timeout or self.timeout
-        try:
-            WebDriverWait(self.driver, wait_time).until(
-                EC.url_contains(url_fragment)
-            )
-            return True
-        except TimeoutException:
-            return False
-    
-    # ================== 工具方法 ==================
-    
-    def scroll_to_element(self, locator: Tuple[By, str], timeout: Optional[int] = None) -> None:
-        """滚动到元素位置"""
-        element = self.find_element(locator, timeout)
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
-    
-    def highlight_element(self, locator: Tuple[By, str], timeout: Optional[int] = None) -> None:
-        """高亮显示元素（用于调试）"""
-        element = self.find_element(locator, timeout)
-        self.driver.execute_script(
-            "arguments[0].style.border='3px solid red'", element
-        )
-        time.sleep(1)
-        self.driver.execute_script(
-            "arguments[0].style.border=''", element
-        )
 
-
-class IllegalStateError(Exception):
-    """非法状态的自定义异常"""
-    pass
-
+# ================== 自定义异常 ==================
 
 class ElementNotFoundError(Exception):
-    """元素未找到的自定义异常"""
-    pass 
+    """元素未找到异常"""
+    pass
+
+class IllegalStateError(Exception):
+    """非法状态异常"""
+    pass

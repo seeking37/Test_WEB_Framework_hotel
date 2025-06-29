@@ -4,7 +4,6 @@ from datetime import date
 from pages.top_page import TopPage
 from pages.signup_page import Rank, Gender
 from common.utils import Utils
-from common.read_data import TestDataLoader
 
 
 @allure.feature("注册功能")
@@ -13,7 +12,7 @@ class TestSignup:
     
     @allure.story("用户注册")
     @allure.title("注册成功")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/signup_cases.yaml', 'signup_success_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/signup_cases.yaml', 'signup_success_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(1)
     def test_signup_success(self, driver, test_case):
         """测试用户成功注册"""
@@ -45,7 +44,7 @@ class TestSignup:
     
     @allure.story("注册失败")
     @allure.title("注册失败")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/signup_cases.yaml', 'signup_failure_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/signup_cases.yaml', 'signup_failure_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(2)
     def test_signup_failure(self, driver, test_case):
         """测试用户注册失败"""

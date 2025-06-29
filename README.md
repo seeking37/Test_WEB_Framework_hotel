@@ -33,8 +33,7 @@
 │   ├── test_reserve.py      # 预订功能测试
 │   └── test_mypage.py       # 个人页面功能测试
 ├── common/                  # 公共工具类
-│   ├── utils.py             # 工具函数
-│   └── read_data.py         # 测试数据加载
+│   └── utils.py             # 工具函数
 ├── data/                    # 测试数据文件
 │   ├── login_cases.yaml     # 登录测试用例数据
 │   ├── signup_cases.yaml    # 注册测试用例数据

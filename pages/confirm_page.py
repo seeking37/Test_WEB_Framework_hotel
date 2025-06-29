@@ -1,9 +1,7 @@
-import time
 import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from pages.base_page import BasePage
-from common.utils import Utils
 import allure
 
 # ================== 确认页面定位符 ==================
@@ -76,7 +74,6 @@ class ConfirmPage(BasePage):
     def do_confirm(self):
         """确认预订"""
         self.click_element(CONFIRM_BUTTON)
-        Utils.sleep(2)
         self.wait_for_element_visible(SUCCESS_MODAL)
     
     def get_modal_message(self) -> str:

@@ -8,7 +8,6 @@ from selenium.webdriver.support.color import Color
 from pages.top_page import TopPage
 from pages.signup_page import Rank, Gender
 from common.utils import Utils
-from common.read_data import TestDataLoader
 
 
 @allure.feature("个人页面")
@@ -24,7 +23,7 @@ class TestMyPageParameterized:
         self.driver.get(Utils.BASE_URL)
     
     @allure.story("预设用户信息显示")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/mypage_cases.yaml', 'existing_users_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/mypage_cases.yaml', 'existing_users_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(1)
     def test_existing_users_info(self, test_case):
         """测试预设用户信息显示"""
@@ -48,7 +47,7 @@ class TestMyPageParameterized:
                 assert my_page.get_notification() == expected['notification']
     
     @allure.story("新用户信息显示")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/mypage_cases.yaml', 'new_user_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/mypage_cases.yaml', 'new_user_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(2)
     def test_new_user_info(self, test_case):
         """测试新用户注册后信息显示"""
@@ -104,7 +103,7 @@ class TestMyPageParameterized:
                 assert my_page.get_notification() == expected['notification']
     
     @allure.story("图标设置")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/mypage_cases.yaml', 'icon_test_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/mypage_cases.yaml', 'icon_test_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(3)
     def test_icon_settings(self, test_case):
         """测试图标设置功能"""
@@ -144,7 +143,7 @@ class TestMyPageParameterized:
                     assert icon_page.get_icon_message() == test_case['expected_message']
     
     @allure.story("用户删除")
-    @pytest.mark.parametrize("test_case", TestDataLoader.get_test_cases('../data/mypage_cases.yaml', 'delete_user_cases'), ids=lambda x: x['id'])
+    @pytest.mark.parametrize("test_case", Utils.get_test_cases('../data/mypage_cases.yaml', 'delete_user_cases'), ids=lambda x: x['id'])
     @pytest.mark.order(4)
     def test_delete_user(self, test_case):
         """测试用户删除功能"""
